@@ -19,7 +19,7 @@ const obterTelefoneCliente = async (numeroDeTelefone) => {
         }
 
         const headers = {
-            'Authorization': 'Key cm90ZWFkb3JhcG9pYXNlOnZkbnFETjJYNVEzS3U1c2FOQUk4',
+            'Authorization': 'ROUTE_KEY',
             'Content-Type': 'application/json'
         }
 
@@ -48,7 +48,7 @@ const obterConversaCliente = async (numeroDeTelefone) => {
         }
 
         const headers = {
-            'Authorization': 'Key cm90ZWFkb3JhcG9pYXNlOnZkbnFETjJYNVEzS3U1c2FOQUk4',
+            'Authorization': 'ROUTER_KEY',
             'Content-Type': 'application/json'
         }
 
@@ -330,7 +330,7 @@ app.post('/api', async (req, res) => {
         const token = req.headers['authorization']
 
         // Verifica se o token foi enviado
-        if (!token || token !== '3296584w6sdaf8443wt68a4edfrhg6a58eh74') {
+        if (!token || token !== 'TOKEN_AUTENTICACAO') {
             return res.status(401).json({ status: 'failed', erro: 'Token Inválido' })
         }
 
