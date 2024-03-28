@@ -33,6 +33,55 @@ const obterTelefoneCliente = async (numeroDeTelefone) => {
     }
 }
 
+function TratarArray(opcao) {
+    let i
+    opcoes = []
+
+    for (i = 0; i < opcao.length; i++) {
+        opcoes.push(opcao[i].title)
+    }
+
+    return opcoes.join(', ')
+}
+
+function TratarBotao(opcao) {
+    let i
+    opcoes = []
+
+    for (i = 0; i < opcao.length; i++) {
+        opcoes.push(opcao[i].text)
+    }
+
+    return opcoes.join(', ')
+}
+
+function TratarData(stringDate) {
+
+    var dataHora = new Date(stringDate)
+
+    // Ajustando para o fuso horário de Brasília (UTC-3)
+    dataHora.setUTCHours(dataHora.getUTCHours() - 3)
+
+    // Obtendo os componentes da data
+    var dia = String(dataHora.getUTCDate()).padStart(2, '0')
+    var mes = String(dataHora.getUTCMonth() + 1).padStart(2, '0')
+    var ano = dataHora.getUTCFullYear()
+
+    // Formatando a data no formato desejado
+    var dataFormatada = dia + '/' + mes + '/' + ano
+
+    // Obtendo os componentes da hora
+    var hora = String(dataHora.getUTCHours()).padStart(2, '0')
+    var minuto = String(dataHora.getUTCMinutes()).padStart(2, '0')
+    var segundo = String(dataHora.getUTCSeconds()).padStart(2, '0')
+    var milissegundo = String(dataHora.getUTCMilliseconds()).padStart(3, '0')
+
+    // Formatando a hora no formato desejado
+    var horaFormatada = hora + ':' + minuto + ':' + segundo + '.' + milissegundo
+
+    return { data: dataFormatada, hora: horaFormatada }
+}
+
 //obter o historico do cliente dentro do bot
 const obterConversaCliente = async (numeroDeTelefone) => {
 
@@ -53,7 +102,7 @@ const obterConversaCliente = async (numeroDeTelefone) => {
         }
 
         const response = await axios.post('https://http.msging.net/commands', data, { headers })
-
+        
         const conversa = Organizar_Conversa(response.data)
 
         function Organizar_Conversa(retornoApiBlip) {
@@ -201,92 +250,71 @@ const obterConversaCliente = async (numeroDeTelefone) => {
 
             diaAtual = TratarData(diaAtual)
 
-            //console.log(context)
-
-            try{
-
+            //console.log("CONTEXTO: " + context)
+            //console.log("NOVA CONVERSA: " + novaConversa)
+            
+            try {
                 let conversaFormatada = '';
-
+                let indexs = []
                 for (let i = 0; i < context.length; i++) {
-
+                    
                     if (context[i].data_hora.data === diaAtual.data) {
+                        
+                        // Encontrar o índice da última mensagem de boas-vindas
+                        let indiceUltimaBoasVindas = -1;
+                       
+                        if (context[i].conteudo === 'Olá, seja bem-vindo(a) ao atendimento da *APOIA.se* 🥰.' || context[i].conteudo === 'Olá, seja bem-vindo(a) ao atendimento da *APOIA.se*.') {
+                            indiceUltimaBoasVindas = i;
+                            indexs.push(indiceUltimaBoasVindas)
+                        } else if(context[i].conteudo === 'template') {
+                            indiceUltimaBoasVindas = i + 1;
+                            indexs.push(indiceUltimaBoasVindas)
+                        }
 
-                        if (context[i].opcoes) {
+                        //checar o maior indice dentro do a indexs
+                        var maiorIndex = Math.max.apply(null, indexs);
+                    }
+                    
+                }
 
-                            var op = context[i].opcoes
-                            conversaFormatada += context[i].status.toString() + "\n" + context[i].conteudo.toString() + "\n" + op + "\n" + context[i].data_hora.data.toString() + " " + context[i].data_hora.hora.toString() + "\n\n"
+                // console.log(maiorIndex)
+                // Se encontrar a última mensagem de boas-vindas
+                if (maiorIndex !== -1) {
+                            
+                    // Iterar a partir da última mensagem de boas-vindas até a mensagem de finalização
+                    for (let j = maiorIndex - 1; j < context.length; j++) {
 
-                        } else if (context[i].legenda) {
+                        // Adicionar a mensagem ao resultado
+                        if (context[j].opcoes) {
+                            var op = context[j].opcoes
+                            conversaFormatada += context[j].status.toString() + "\n" + context[j].conteudo.toString() + "\n" + op + "\n" + context[j].data_hora.data.toString() + " " + context[j].data_hora.hora.toString() + "\n\n"
 
-                            conversaFormatada += context[i].status.toString() + "\n" + context[i].conteudo.toString() + "\n" + context[i].legenda.toString() + "\n" + context[i].data_hora.data.toString() + " " + context[i].data_hora.hora.toString() + "\n\n"
+                        } else if (context[j].legenda) {
+
+                            conversaFormatada += context[j].status.toString() + "\n" + context[j].conteudo.toString() + "\n" + context[j].legenda.toString() + "\n" + context[j].data_hora.data.toString() + " " + context[j].data_hora.hora.toString() + "\n\n"
 
                         } else {
 
-                            conversaFormatada += context[i].status.toString() + "\n" + context[i].conteudo.toString() + "\n" + context[i].data_hora.data.toString() + " " + context[i].data_hora.hora.toString() + "\n\n"
+                            conversaFormatada += context[j].status.toString() + "\n" + context[j].conteudo.toString() + "\n" + context[j].data_hora.data.toString() + " " + context[j].data_hora.hora.toString() + "\n\n"
 
                         }
 
+                        // Verificar se a mensagem atual é a de finalização
+                        if (context[j].conteudo === 'A *APOIA.se* agradece o contato, até breve 👋🏾') {
+                            break; // Encerrar a iteração ao encontrar a mensagem de finalização
+                        }
                     }
-
                 }
 
-                return conversaFormatada
-            } catch(error){
-                console.error('Erro ao obter a conversa do cliente:', error.message);
+                //console.log(conversaFormatada)
+                return conversaFormatada;
+            } catch (error) {
+                console.error('Erro ao formatar a conversa do cliente:', error.message);
                 return error;
             }
 
         }
-
-        function TratarArray(opcao) {
-            let i
-            opcoes = []
-
-            for (i = 0; i < opcao.length; i++) {
-                opcoes.push(opcao[i].title)
-            }
-
-            return opcoes.join(', ')
-        }
-
-        function TratarBotao(opcao) {
-            let i
-            opcoes = []
-
-            for (i = 0; i < opcao.length; i++) {
-                opcoes.push(opcao[i].text)
-            }
-
-            return opcoes.join(', ')
-        }
-
-        function TratarData(stringDate) {
-
-            var dataHora = new Date(stringDate)
-
-            // Ajustando para o fuso horário de Brasília (UTC-3)
-            dataHora.setUTCHours(dataHora.getUTCHours() - 3)
-
-            // Obtendo os componentes da data
-            var dia = String(dataHora.getUTCDate()).padStart(2, '0')
-            var mes = String(dataHora.getUTCMonth() + 1).padStart(2, '0')
-            var ano = dataHora.getUTCFullYear()
-
-            // Formatando a data no formato desejado
-            var dataFormatada = dia + '/' + mes + '/' + ano
-
-            // Obtendo os componentes da hora
-            var hora = String(dataHora.getUTCHours()).padStart(2, '0')
-            var minuto = String(dataHora.getUTCMinutes()).padStart(2, '0')
-            var segundo = String(dataHora.getUTCSeconds()).padStart(2, '0')
-            var milissegundo = String(dataHora.getUTCMilliseconds()).padStart(3, '0')
-
-            // Formatando a hora no formato desejado
-            var horaFormatada = hora + ':' + minuto + ':' + segundo + '.' + milissegundo
-
-            return { data: dataFormatada, hora: horaFormatada }
-        }
-
+        //console.log(conversa)
         return conversa
 
     } catch (error) {
@@ -304,13 +332,16 @@ const enviarNotasPipedrive = async (notas, idPipe, token) => {
         //    person_id: `${idPipe}`//trazer este id do person, ou seja, do corpo da requisição
         //}
 
+        console.log(notas)
+        var id_Deal = parseInt(idPipe)
+
         const data = {
             content: notas,
-            deal_id: idPipe // trazer este id do deal, ou seja, do corpo da requisição
+            deal_id: id_Deal // trazer este id do deal, ou seja, do corpo da requisição
         }
 
         const headers = {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
 

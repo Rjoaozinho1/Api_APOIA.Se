@@ -1,0 +1,65 @@
+{
+    "id": "2183eb61-e84c-4e2a-8eba-9aae3f095f0d",
+    "direction": "sent",
+    "type": "application/json",
+    "content": {
+        "type": "template",
+        "template": {
+            "namespace": "e161161a_e210_4535_9e6e_5ad86f124794",
+            "name": "convite_farming",
+            "language": {
+                "code": "pt_BR",
+                "policy": "deterministic"
+            },
+            "components": [
+                {
+                    "type": "body",
+                    "parameters": [
+                        {
+                            "type": "text",
+                            "text": "João Pedro"
+                        },
+                        {
+                            "type": "text",
+                            "text": "João Pedro Costa Machado"
+                        }
+                    ]
+                },
+                {
+                    "type": "button",
+                    "sub_type": "quick_reply",
+                    "index": 0,
+                    "parameters": [
+                        {
+                            "type": "payload",
+                            "payload": "Sim"
+                        }
+                    ]
+                },
+                {
+                    "type": "button",
+                    "sub_type": "quick_reply",
+                    "index": 1,
+                    "parameters": [
+                        {
+                            "type": "payload",
+                            "payload": "Não"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "date": "2024-02-23T13:16:26.168Z",
+    "status": "consumed",
+    "metadata": {
+        "$internalId": "30cec845-3a12-4c71-924e-b15266ec9a33",
+        "$originatorSessionRemoteNode": "roteadorapoiase@msging.net/!msging-server-szx5t-3udafgzm",
+        "traceparent": "00-9a60669ec6e3ac0cf56dfe3e6b983d38-f301cdbf5623e92f-01",
+        "#uniqueId": "30cec845-3a12-4c71-924e-b15266ec9a33",
+        "#date_processed": "1708694186163",
+        "#messageKind": "Response",
+        "date_created": "1708694186139",
+        "$elapsedTimeToStorage": "00:00:00.0526489"
+    }
+}
