@@ -19,7 +19,7 @@ const obterTelefoneCliente = async (numeroDeTelefone) => {
         }
 
         const headers = {
-            'Authorization': 'Key cm90ZWFkb3JhcG9pYXNlOnZkbnFETjJYNVEzS3U1c2FOQUk4',
+            'Authorization': 'ROUTER_KEY',
             'Content-Type': 'application/json'
         }
 
@@ -97,7 +97,7 @@ const obterConversaCliente = async (numeroDeTelefone) => {
         }
 
         const headers = {
-            'Authorization': 'Key cm90ZWFkb3JhcG9pYXNlOnZkbnFETjJYNVEzS3U1c2FOQUk4',
+            'Authorization': 'ROUTER_KEY',
             'Content-Type': 'application/json'
         }
 
@@ -332,7 +332,7 @@ const enviarNotasPipedrive = async (notas, idPipe, token) => {
         //    person_id: `${idPipe}`//trazer este id do person, ou seja, do corpo da requisição
         //}
 
-        console.log(notas)
+        // console.log(notas)
         var id_Deal = parseInt(idPipe)
 
         const data = {
@@ -369,7 +369,7 @@ app.post('/api', async (req, res) => {
         const token = req.headers['authorization']
 
         // Verifica se o token foi enviado
-        if (!token || token !== '3296584w6sdaf8443wt68a4edfrhg6a58eh74') {
+        if (!token || token !== 'TOKEN_AUTENTICACAO') {
             return res.status(401).json({ status: 'failed', erro: 'Token Inválido' })
         }
 

@@ -338,7 +338,7 @@ app.post('/api', async (req, res) => {
         const token = req.headers['authorization']
 
         // Verifica se o token foi enviado
-        if (!token || token !== 'TOKEN') {
+        if (!token || token !== 'TOKEN_AUTENTICACAO') {
             return res.status(401).json({ status: 'failed', erro: 'Token Inválido' })
         }
 
